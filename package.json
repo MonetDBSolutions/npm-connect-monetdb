@@ -1,6 +1,6 @@
 {
   "name": "connect-monetdb",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A straightforward MonetDB session store for Connect/Express",
   "main": "index.js",
   "keywords": [
@@ -8,6 +8,10 @@
     "Express",
     "Connect"
   ],
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://github.com/MonetDB/npm-connect-monetdb"
+  },
   "author": {
     "name": "R. Cijvat",
     "email": "robin.cijvat@monetdbsolutions.com"

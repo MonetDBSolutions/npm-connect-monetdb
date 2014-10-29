@@ -39,4 +39,4 @@ var app = require("express")();
 app.use(session(sessOpt));
 ```
 
-**Please report any suggestions/bugs to rcijvat@gmail.com**
+**Please report any suggestions/bugs to robin.cijvat@monetdbsolutions.com**
