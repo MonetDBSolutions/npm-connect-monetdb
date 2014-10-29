@@ -1,0 +1,16 @@
+{
+  "name": "connect-monetdb",
+  "version": "0.0.4",
+  "description": "A straightforward MonetDB session store for Connect/Express",
+  "main": "index.js",
+  "keywords": [
+    "MonetDB",
+    "Express",
+    "Connect"
+  ],
+  "author": {
+    "name": "R. Cijvat",
+    "email": "robin.cijvat@monetdbsolutions.com"
+  },
+  "license": "MIT"
+}
