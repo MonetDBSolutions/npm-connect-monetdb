@@ -19,7 +19,7 @@ module.exports = function(session) {
 				[sid, now]).then(function(result) {
 			if(result.rows > 0) {
 				try {
-					fn(null, JSON.parse(data[0][0]));
+					fn(null, JSON.parse(result.data[0][0]));
 				} catch(e) {
 					self.destroy(sid, fn);
 				}

@@ -1,7 +1,7 @@
 # connect-monetdb
 A straightforward MonetDB session store for Connect/Express. This module has no direct dependencies, but it does require you to pass it two things:
-1) A session variable, resulting from require("express-session")
-2) An active MonetDB connection, resulting from a call to require("monetdb").connect() or require("monetdb").connectQ
+1. A session variable, resulting from require("express-session")
+2. An active MonetDB connection, resulting from a call to require("monetdb").connect() or require("monetdb").connectQ
 
 # Installation
 npm install [-g] connect-monetdb
