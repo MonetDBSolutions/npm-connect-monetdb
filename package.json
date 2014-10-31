@@ -1,6 +1,6 @@
 {
   "name": "connect-monetdb",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "A straightforward MonetDB session store for Connect/Express",
   "main": "index.js",
   "keywords": [

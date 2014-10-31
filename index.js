@@ -15,49 +15,55 @@ module.exports = function(session) {
 		if(Math.random() < 0.01) {
 			self.conn.query("DELETE FROM session WHERE expire < ?", [now]);
 		}
-		self.conn.queryQ("SELECT sess FROM session WHERE sid = ? AND expire >= ?", 
-				[sid, now]).then(function(result) {
-			if(result.rows > 0) {
-				try {
-					fn(null, JSON.parse(result.data[0][0]));
-				} catch(e) {
-					self.destroy(sid, fn);
+		self.conn.query("SELECT sess FROM session WHERE sid = ? AND expire >= ?", 
+			[sid, now], 
+			function(err, result) {
+				if(err) {
+					return fn(err);
 				}
-			} else {
-				fn(null);
+				if(!result.data || !result.data[0] || !result.data[0][0]) {
+					return fn(null);
+				}
+				try {
+					return fn(null, JSON.parse(result.data[0][0]));
+				} catch(e) {
+					return self.destroy(sid, fn);
+				}
 			}
-		}, function(err) {
-			fn(err);
-		}).done();
+		);
 	};
 
 	MDBSessStore.prototype.set = function(sid, sess, fn) {
 		var self = this;
 		var maxAge = sess.cookie.maxAge ? sess.cookie.maxAge : 24 * 3600;
-		self.conn.queryQ("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
-			var query;
-			var params;
+
+		self.conn.query("SELECT * FROM session WHERE sid = ?", [sid], function(err, result) {
+			if(err) return fn(err);
 			if(result.rows == 0) {
-				query = "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)";
-				params = [sid, JSON.stringify(sess), Math.round(Date.now() / 1000) + maxAge];
+				self.conn.query("INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)", 
+					[sid, JSON.stringify(sess), Math.round(Date.now() / 1000) + maxAge], 
+					function(err) {
+						fn && fn(err);
+					}
+				);
 			} else {
-				query = "UPDATE session SET sess = ? WHERE sid = ?";
-				params = [JSON.stringify(sess), sid];
+				self.conn.query("UPDATE session SET sess = ? WHERE sid = ?",
+					[JSON.stringify(sess), sid],
+					function(err) {
+						fn && fn(err);
+					}
+				);
 			}
-			return self.conn.queryQ(query, params);
-		}).then(function() {
-			fn && fn(null);
-		}, function(err) {
-			fn && fn(err);
-		}).done();
+		});
 	};
 
 	MDBSessStore.prototype.destroy = function(sid, fn) {
-		this.conn.queryQ("DELETE FROM session WHERE sid = ?", [sid]).then(function() {
-			fn && fn(null);
-		}, function(err) {
-			fn && fn(err);
-		});
+		this.conn.query("DELETE FROM session WHERE sid = ?",
+			[sid],
+			function(err) {
+				fn && fn(err);
+			}
+		);
 	};
 
 	return MDBSessStore;
