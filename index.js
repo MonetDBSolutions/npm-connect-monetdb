@@ -18,7 +18,7 @@ module.exports = function(session) {
 		if(Math.random() < 0.01) {
 			self.db.query("DELETE FROM session WHERE expire < ?", [now]);
 		}
-		self.db.query("SELECT sess FROM session WHERE sid = ? AND expire >= ?", [sid, now]).then(function(result) {
+		self.db.query("SELECT sess FROM session WHERE sid = ? AND expire >= ?", [sid, now], false).then(function(result) {
             if (!result.data || !result.data[0] || !result.data[0][0]) {
                 return fn && fn(null);
             }
