@@ -4,32 +4,51 @@
 [![npm version](https://badge.fury.io/js/connect-monetdb.svg)](http://badge.fury.io/js/connect-monetdb)
 
 A straightforward MonetDB session store for Connect/Express. This module has no direct dependencies, but it does require you to pass it two things:
+
 1. A session variable, resulting from require("express-session")
-2. An active MonetDB connection, resulting from a call to require("monetdb").connect() or require("monetdb").connectQ
+2. A [MonetDBConnection](https://github.com/MonetDB/monetdb-nodejs#mdbconnection), 
+or a [MonetDBPool](https://github.com/MonetDB/monetdb-pool-nodejs) object
 
 # Installation
 npm install [-g] connect-monetdb
 
-# Usage
-**Initializing the store by creating a MonetDB connection and passing it to the store constructor**
+# Create a table to store session information
+
+```sql
+CREATE TABLE session (
+    sid              STRING        NOT NULL PRIMARY KEY,
+    sess             STRING        NOT NULL,
+    expire           INT           NOT NULL
+);
 ```
-var MonetDB = require('monetdb');
+
+# Usage
+**Initializing the store by creating a MonetDBConnection object and passing it to the store constructor**
+```javascript
+var MonetDBConnection = require('monetdb')();
 var session = require("express-session");
 var MDBSessStore = require("connect-monetdb")(session);
 
-var conn = MonetDB.connect({
-	dbname: "demo"
-}, function(err) {
-	if(err) {
-		throw new Error("Could not connect to the database: "+err);
-	}
-});
+var conn = new MonetDB({ dbname: "demo" });
+conn.connect();
 
 var store = new MDBSessStore(conn);
 ```
 
-**Set up the express app to use the just created store**
+**Initializing the store by creating a MonetDBPool object and passing it to the store constructor**
+```javascript
+var MonetDBPool = require('monetdb-pool')();
+var session = require("express-session");
+var MDBSessStore = require("connect-monetdb")(session);
+
+var pool = new MonetDBPool({ nrConnections: 4 }, { dbname: "demo" });
+pool.connect();
+
+var store = new MDBSessStore(pool);
 ```
+
+**Set up the express app to use the just created store**
+```javascript
 var sessOpt = {
 	store: store,
 	secret: "i2D#0wj38D_kZhW20&qA97hQQd@0/S81h",
