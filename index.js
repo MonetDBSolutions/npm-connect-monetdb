@@ -2,8 +2,8 @@
 module.exports = function(session) {
 
 	function MDBSessStore(db) {
-		if(!(db instanceof MonetDBConnection) && !(db instanceof MonetDBPool)) {
-            throw new Error("MDBSessStore needs as its first argument either a MonetDBConnection object or a MonetDBPool object");
+		if(!db.query) {
+            throw new Error("MDBSessStore needs as its first argument either a MonetDBConnection object or a MonetDBPool object.");
         }
         this.db = db;
 	}
