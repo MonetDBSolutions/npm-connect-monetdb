@@ -22,11 +22,7 @@ module.exports = function(session) {
             if (!result.data || !result.data[0] || !result.data[0][0]) {
                 return fn && fn(null);
             }
-            try {
-                return fn && fn(null, JSON.parse(result.data[0][0]));
-            } catch (e) {
-                return self.destroy(sid, fn);
-            }
+            return fn && fn(null, JSON.parse(result.data[0][0]));
         }, function(err) {
             fn && fn(err);
         });
