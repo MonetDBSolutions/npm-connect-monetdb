@@ -35,8 +35,7 @@ module.exports = function(session) {
 		self.db.query("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
             var stringifiedSess = JSON.stringify(sess)
                 .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+                .replace("\r", "\\r");
 			if(result.rows == 0) {
 				return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
