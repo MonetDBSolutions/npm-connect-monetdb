@@ -33,15 +33,19 @@ module.exports = function(session) {
 		var maxAge = sess.cookie.maxAge ? sess.cookie.maxAge : 24 * 3600;
 
 		self.db.query("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
+            var stringifiedSess = JSON.stringify(sess)
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
 			if(result.rows == 0) {
 				return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
-					[sid, JSON.stringify(sess), Math.round(Date.now() / 1000) + maxAge]
+					[sid, JSON.stringify(stringifiedSess), Math.round(Date.now() / 1000) + maxAge]
                 );
 			}
             return self.db.query(
                 "UPDATE session SET sess = ? WHERE sid = ?",
-                [JSON.stringify(sess), sid]
+                [JSON.stringify(stringifiedSess), sid]
             );
 		}).then(function() {
             fn && fn(null);
