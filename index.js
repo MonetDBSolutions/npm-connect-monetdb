@@ -39,12 +39,12 @@ module.exports = function(session) {
 			if(result.rows == 0) {
 				return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
-					[sid, JSON.stringify(stringifiedSess), Math.round(Date.now() / 1000) + maxAge]
+					[sid, stringifiedSess, Math.round(Date.now() / 1000) + maxAge]
                 );
 			}
             return self.db.query(
                 "UPDATE session SET sess = ? WHERE sid = ?",
-                [JSON.stringify(stringifiedSess), sid]
+                [stringifiedSess, sid]
             );
 		}).then(function() {
             fn && fn(null);
