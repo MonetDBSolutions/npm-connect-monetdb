@@ -22,8 +22,7 @@ module.exports = function(session) {
             if (!result.data || !result.data[0] || !result.data[0][0]) {
                 return fn && fn(null);
             }
-            var parsedSess = JSON.parse(result.data[0][0].replace("\n", "\\n", "\r", "\\r"));
-            return fn && fn(null, parsedSess);
+            return fn && fn(null, JSON.parse(result.data[0][0]));
         }, function(err) {
             fn && fn(err);
         });
@@ -35,8 +34,7 @@ module.exports = function(session) {
 
         self.db.query("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
             var stringifiedSess = JSON.stringify(sess)
-                .replace("\n", "\\n")
-                .replace("\r", "\\r");
+                .replace(/\\n/g, "\\\\n");
             if(result.rows == 0) {
                 return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
