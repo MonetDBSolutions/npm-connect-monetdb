@@ -22,7 +22,14 @@ module.exports = function(session) {
             if (!result.data || !result.data[0] || !result.data[0][0]) {
                 return fn && fn(null);
             }
-            return fn && fn(null, JSON.parse(result.data[0][0]));
+            // escape some special vars, see spec on http://json.org/ for more info
+            var escaped = result.data[0][0]
+                .replace(/\f/g, "\\f")
+                .replace(/\n/g, "\\n")
+                .replace(/\r/g, "\\r")
+                .replace(/\t/g, "\\t");
+
+            return fn && fn(null, JSON.parse(escaped));
         }, function(err) {
             fn && fn(err);
         });
@@ -33,13 +40,7 @@ module.exports = function(session) {
         var maxAge = sess.cookie.maxAge ? sess.cookie.maxAge : 24 * 3600;
 
         self.db.query("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
-            sess.keyval && sess.keyval.newsource && sess.keyval.newsource.step2 && console.log(sess.keyval.newsource.step2);
-            sess.keyval && sess.keyval.newatlas && sess.keyval.newatlas.step2 && console.log(sess.keyval.newatlas.step2);
-            var stringifiedSess = JSON.stringify(sess)
-                .replace(/\\\\/g, "\\")
-                .replace(/\\n/g, "\\\\n");
-            sess.keyval && sess.keyval.newsource && sess.keyval.newsource.step2 && console.log(sess.keyval.newsource.step2);
-            sess.keyval && sess.keyval.newatlas && sess.keyval.newatlas.step2 && console.log(sess.keyval.newatlas.step2);
+            var stringifiedSess = JSON.stringify(sess);
             if(result.rows == 0) {
                 return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
