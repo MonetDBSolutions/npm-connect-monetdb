@@ -33,8 +33,13 @@ module.exports = function(session) {
         var maxAge = sess.cookie.maxAge ? sess.cookie.maxAge : 24 * 3600;
 
         self.db.query("SELECT * FROM session WHERE sid = ?", [sid]).then(function(result) {
+            sess.keyval && sess.keyval.newsource && sess.keyval.newsource.step2 && console.log(sess.keyval.newsource.step2);
+            sess.keyval && sess.keyval.newatlas && sess.keyval.newatlas.step2 && console.log(sess.keyval.newatlas.step2);
             var stringifiedSess = JSON.stringify(sess)
+                .replace(/\\\\/g, "\\")
                 .replace(/\\n/g, "\\\\n");
+            sess.keyval && sess.keyval.newsource && sess.keyval.newsource.step2 && console.log(sess.keyval.newsource.step2);
+            sess.keyval && sess.keyval.newatlas && sess.keyval.newatlas.step2 && console.log(sess.keyval.newatlas.step2);
             if(result.rows == 0) {
                 return self.db.query(
                     "INSERT INTO session (sid, sess, expire) VALUES (?, ?, ?)",
